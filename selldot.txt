@@ -1,0 +1,40 @@
+Categories : 
+",
+" --Electronics",
+" --Phones and acessories ",
+" --Food and beverages",
+" --Clothing",
+" --Furnitures",
+" --Health and lifestyle",
+" --Footwears",
+" --Cars and spare parts",
+" --Laptops and accessories",
+" --Building materials",
+" --Property => Land, homes",
+" --Wristwatches",
+" --Toys",
+" --Fridges and Refrigerators",
+" --Generators
+
+
+
+ad_table
+
+-- id
+-- name
+-- category
+-- brand
+-- description
+-- price
+-- picture
+-- timestamp
+-- status (pending,active,inactive)
+
+
+
+
+
+
+
+
+
