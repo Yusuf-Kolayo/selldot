@@ -1,8 +1,8 @@
-<?php
+<?php  session_start();
 
     require 'functions.php';  $row = '';   $msg = '';
 
-
+    
 
 
     if (isset($_POST['btn_submit'])) {  // if button is submitted
@@ -17,7 +17,7 @@
                   $connection = mysqli_connect('localhost','root','','selldot',3306);
 
                   // check for the prescence of email in the DB
-                  $sql = "SELECT id FROM users WHERE email=? and password=?";
+                  $sql = "SELECT * FROM users WHERE email=? and password=?";
                   $stmt = mysqli_prepare($connection, $sql);
                   mysqli_stmt_bind_param($stmt, 'ss', $email,$password);
                   mysqli_stmt_execute($stmt);  
@@ -25,6 +25,15 @@
                   $n_row = mysqli_num_rows($rs);  
 
                   if ($n_row>0) {
+                        $row = mysqli_fetch_assoc($rs);
+                        
+                        // register user in session
+                        $_SESSION['log_status'] = true;
+
+                        foreach ($row as $key => $value) {
+                           $_SESSION[$key] = $value;
+                        }
+                       
                         header('location:user/dashboard.php');
                   } else {
                     $alert_type = 'alert-danger';
@@ -45,8 +54,8 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="imgs/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bootstrap-5.3.1/css/bootstrap.min.css">
-    <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap-5.3.1/css/bootstrap.min.css">
+    <script src="assets/bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
     <title>SellDot</title>
     <style>
          .card-img-top {
@@ -118,7 +127,7 @@
                         <button type="reset" class="btn btn-primary">Clear</button>
                     </div>
                     <div class="col-6 text-end">
-                        <button type="submit" name="btn_submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" name="btn_submit" class="btn btn-primary">Log In</button>
                     </div>
                 </div>
 
