@@ -15,6 +15,9 @@
       session_destroy(); 
       header('location:../login.php');
   }
+
+  // create a connection string
+  $connection = mysqli_connect('localhost','root','','selldot',3306);
 ?>
 
 <!doctype html>

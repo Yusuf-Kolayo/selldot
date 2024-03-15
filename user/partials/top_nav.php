@@ -2,8 +2,6 @@
   $msg = '';
   require ('../functions.php');
   
-   // create a connection string
-   $connection = mysqli_connect('localhost','root','','selldot',3306);
 ?>
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="calendar3" viewBox="0 0 16 16">

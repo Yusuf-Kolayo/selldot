@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="imgs/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bootstrap-5.3.1/css/bootstrap.min.css">
-    <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap-5.3.1/css/bootstrap.min.css">
+    <script src="assets/bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
     <title>SellDot</title>
     <style>
          .card-img-top {
@@ -58,42 +58,45 @@
 
 
 <div class="row mt-4">
-      <div class="col-md-3">
-            <div class="card">
-                  <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
-                  <div class="card-body">
-                      <h4 class="mb-1">Binatone 1.7 Litres Deluxe Thermo Kettle (CEJ-1799DW)</h4>
-                      <p class="mb-0"><small>&#8358;34,000</small></p>
-                  </div>
-            </div>
-      </div>
-      <div class="col-md-3">
-            <div class="card">
-                  <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
-                  <div class="card-body">
-                      <h4 class="mb-1">Binatone 1.7 Litres Deluxe Thermo Kettle (CEJ-1799DW)</h4>
-                      <p class="mb-0"><small>&#8358;34,000</small></p>
-                  </div>
-            </div>
-      </div>
-      <div class="col-md-3">
-            <div class="card">
-                  <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
-                  <div class="card-body">
-                      <h4 class="mb-1">Binatone 1.7 Litres Deluxe Thermo Kettle (CEJ-1799DW)</h4>
-                      <p class="mb-0"><small>&#8358;34,000</small></p>
-                  </div>
-            </div>
-      </div>
-      <div class="col-md-3">
-            <div class="card">
-                  <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
-                  <div class="card-body">
-                      <h4 class="mb-1">Binatone 1.7 Litres Deluxe Thermo Kettle (CEJ-1799DW)</h4>
-                      <p class="mb-0"><small>&#8358;34,000</small></p>
-                  </div>
-            </div>
-      </div>
+<?php
+
+   // create a connection string
+   $connection = mysqli_connect('localhost','root','','selldot',3306);
+
+$sql = "SELECT * FROM ad_table";
+$result = mysqli_query($connection, $sql);
+$n_row  = mysqli_num_rows($result);  
+
+if ($n_row>0) {
+
+   while ($row=mysqli_fetch_assoc($result)) {
+     $name = $row['name'];
+     $category = $row['category'];
+     $brand = $row['brand'];
+     $price = $row['price'];
+     $status = $row['status'];
+     $description = $row['description'];
+     $timestamp = $row['timestamp'];
+
+   
+     echo '<div class="col-md-3">
+              <div class="card">
+                    <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
+                    <div class="card-body">
+                        <h4 class="mb-1">'.$name.'</h4>
+                        <p class="mb-0">
+                          <small>
+                             Price: &#8358;;'.$price.' <br> '.$description.'<br>
+                          </small>
+                        </p>
+                    </div>
+              </div>
+          </div>';
+   }
+}
+
+
+?> 
 </div>
 
 

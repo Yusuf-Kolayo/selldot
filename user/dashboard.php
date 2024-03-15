@@ -23,43 +23,69 @@
                   $brand = $_POST['brand'];
                   $price = $_POST['price'];
                   $description = $_POST['description'];
+
+                  var_dump($_FILES);
+
+                  // fetch details of the picture
+                  $name = $_FILES['picture']['name'];
+                  $type = $_FILES['picture']['type'];
+                  $size = $_FILES['picture']['size'];
+                  $name = $_FILES['picture']['name'];
+
+                  $allowedPicTypes = [
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png',
+                    'image/webp'
+                  ];
+                  
+                  if (in_array($type, $allowedPicTypes)) {
+                      
+                    $alert_type = 'alert-success';
+                    $msg = 'Picture Type Allowed';
+
+                  } else {
+                    $alert_type = 'alert-danger';
+                     $msg = 'Error: Invalid Picture Type';
+                  }
+
                  
                   
-                  if (
-                    strlen($name)>0&&
-                    strlen($category)>0&&
-                    strlen($brand)>0&&
-                    strlen($price)>0&&
-                    strlen($description)>0
-                  ) {
+                  // if (
+                  //   strlen($name)>0&&
+                  //   strlen($category)>0&&
+                  //   strlen($brand)>0&&
+                  //   strlen($price)>0&&
+                  //   strlen($description)>0
+                  // ) {
                      
                      
           
-                                  $status = 'pending';
-                                  $timestamp = time();
-                                  // insert in the table
-                                  $sql = "INSERT INTO ad_table (user_id,name,category,brand,price,description,status,timestamp) VALUES(?,?,?,?,?,?,?,?)";
-                                  $stmt = mysqli_prepare($connection, $sql);
-                                  mysqli_stmt_bind_param($stmt, 'ssssssss', $logged_user_id,$name,$category,$brand,$price,$description,$status,$timestamp);
-                                  mysqli_stmt_execute($stmt);
-                                  $row = mysqli_stmt_affected_rows($stmt);
+                  //                 $status = 'pending';
+                  //                 $timestamp = time();
+                  //                 // insert in the table
+                  //                 $sql = "INSERT INTO ad_table (user_id,name,category,brand,price,description,status,timestamp) VALUES(?,?,?,?,?,?,?,?)";
+                  //                 $stmt = mysqli_prepare($connection, $sql);
+                  //                 mysqli_stmt_bind_param($stmt, 'ssssssss', $logged_user_id,$name,$category,$brand,$price,$description,$status,$timestamp);
+                  //                 mysqli_stmt_execute($stmt);
+                  //                 $row = mysqli_stmt_affected_rows($stmt);
           
-                                  // check for number of rows inserted
-                                  $row = mysqli_affected_rows($connection);   
-                                  if ($row>0) {
-                                    $alert_type = 'alert-success';
-                                    $msg = 'Ad was posted successfully';
-                                  } else if ($row==0) {
-                                    $alert_type = 'alert-danger';
-                                    $msg = 'something went wrong';
-                                  }
+                  //                 // check for number of rows inserted
+                  //                 $row = mysqli_affected_rows($connection);   
+                  //                 if ($row>0) {
+                  //                   $alert_type = 'alert-success';
+                  //                   $msg = 'Ad was posted successfully';
+                  //                 } else if ($row==0) {
+                  //                   $alert_type = 'alert-danger';
+                  //                   $msg = 'something went wrong';
+                  //                 }
                         
                             
 
-                  } else {
-                     $alert_type = 'alert-danger';
-                     $msg     = 'Please fill all the required fields';
-                  }
+                  // } else {
+                  //    $alert_type = 'alert-danger';
+                  //    $msg     = 'Please fill all the required fields';
+                  // }
                    
 
               }
@@ -84,10 +110,6 @@
                if (strlen($msg)>0) {
                   echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
                }
-
-
-
-
 
 
 
@@ -156,7 +178,7 @@
           <div class="modal fade" id="newAdModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
-              <form class="mb-0" action="" method="post">
+              <form class="mb-0" action="" method="post" enctype="multipart/form-data">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="newAdModalLabel">New Ad</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -207,7 +229,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="" class="form-label">Picture</label>
-                            <input name="picture" type="file" class="form-control" >
+                            <input name="picture" type="file" class="form-control" required>
                         </div>
                   
                 </div>
