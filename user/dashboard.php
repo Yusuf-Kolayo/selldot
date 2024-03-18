@@ -30,22 +30,40 @@
                   $name = $_FILES['picture']['name'];
                   $type = $_FILES['picture']['type'];
                   $size = $_FILES['picture']['size'];
-                  $name = $_FILES['picture']['name'];
+                  $tmp_name = $_FILES['picture']['tmp_name'];
 
+                  // an array of alllowed file-types
                   $allowedPicTypes = [
                     'image/jpeg',
                     'image/jpg',
                     'image/png',
                     'image/webp'
                   ];
-                  
+
+                  // checking for the right filetype
                   if (in_array($type, $allowedPicTypes)) {
                       
-                    $alert_type = 'alert-success';
-                    $msg = 'Picture Type Allowed';
+                    // checking for the right filesize
+                    if ($size<=2000000) {
+
+                        $result =  move_uploaded_file($tmp_name, 'ad_pictures/'.$name);
+                        if ($result==true) {
+
+                          $alert_type = 'alert-success';
+                          $msg = 'Picture Uploaded Successfully'; 
+
+                        } else {
+                          $alert_type = 'alert-danger';
+                          $msg = 'Error: Picture Upload Failed'; 
+                        }
+
+                    } else {
+                      $alert_type = 'alert-danger';
+                      $msg = 'Error: Invalid Filesize (only <= 2MB Allowed)'; 
+                    }
 
                   } else {
-                    $alert_type = 'alert-danger';
+                     $alert_type = 'alert-danger';
                      $msg = 'Error: Invalid Picture Type';
                   }
 
