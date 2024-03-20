@@ -4,7 +4,9 @@
   $log_status = $_SESSION['log_status'];
   $logged_user_first_name = $_SESSION['first_name']; 
   $logged_user_id = $_SESSION['user_id']; 
+  $logged_user_type = $_SESSION['user_type']; 
 
+  // var_dump($_SESSION); die();
 
   if ($log_status!=true) {
       header('location:../login.php');
@@ -23,7 +25,11 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head>
-    
+     <script>
+         if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+         }
+     </script>
     <script src="../assets/js/color-modes.js"></script>
 
     <meta charset="utf-8">

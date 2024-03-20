@@ -18,93 +18,89 @@
 
               if (isset($_POST['btn_submit'])) { // if the button submits to server
 
-                  $name = $_POST['name'];
+                  $item_name = $_POST['name'];
                   $category = $_POST['category'];
                   $brand = $_POST['brand'];
                   $price = $_POST['price'];
                   $description = $_POST['description'];
 
-                  var_dump($_FILES);
+                  
+                            if (
+              strlen($item_name)>0&&
+              strlen($category)>0&&
+              strlen($brand)>0&&
+              strlen($price)>0&&
+              strlen($description)>0
+            ) {
 
-                  // fetch details of the picture
-                  $name = $_FILES['picture']['name'];
-                  $type = $_FILES['picture']['type'];
-                  $size = $_FILES['picture']['size'];
-                  $tmp_name = $_FILES['picture']['tmp_name'];
+                          // fetch details of the picture
+                          $img_name = $_FILES['picture']['name'];
+                          $type = $_FILES['picture']['type'];
+                          $size = $_FILES['picture']['size'];
+                          $tmp_name = $_FILES['picture']['tmp_name'];
 
-                  // an array of alllowed file-types
-                  $allowedPicTypes = [
-                    'image/jpeg',
-                    'image/jpg',
-                    'image/png',
-                    'image/webp'
-                  ];
+                          $timestamp = time();
+                          $new_img_name = $logged_user_id.'_'.$timestamp.'_'.$img_name;
 
-                  // checking for the right filetype
-                  if (in_array($type, $allowedPicTypes)) {
-                      
-                    // checking for the right filesize
-                    if ($size<=2000000) {
+                          // an array of alllowed file-types
+                          $allowedPicTypes = [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                            'image/webp'
+                          ];
 
-                        $result =  move_uploaded_file($tmp_name, 'ad_pictures/'.$name);
-                        if ($result==true) {
+                          // checking for the right filetype
+                          if (in_array($type, $allowedPicTypes)) {
+                              
+                            // checking for the right filesize
+                            if ($size<=2000000) {
 
-                          $alert_type = 'alert-success';
-                          $msg = 'Picture Uploaded Successfully'; 
+                                $result =  move_uploaded_file($tmp_name, 'ad_pictures/'.$new_img_name);
+                                if ($result==true) { // if picture upload successfull
 
-                        } else {
-                          $alert_type = 'alert-danger';
-                          $msg = 'Error: Picture Upload Failed'; 
-                        }
 
-                    } else {
-                      $alert_type = 'alert-danger';
-                      $msg = 'Error: Invalid Filesize (only <= 2MB Allowed)'; 
-                    }
+                                      $status = 'pending'; 
+                                      // insert in the table
+                                      $sql = "INSERT INTO ad_table (user_id,name,category,brand,price,description,status,img_name,timestamp) VALUES(?,?,?,?,?,?,?,?,?)";
+                                      $stmt = mysqli_prepare($connection, $sql);
+                                      mysqli_stmt_bind_param($stmt, 'sssssssss', $logged_user_id,$item_name,$category,$brand,$price,$description,$status,$new_img_name,$timestamp);
+                                      mysqli_stmt_execute($stmt);
+                                      $row = mysqli_stmt_affected_rows($stmt);
+              
+                                      // check for number of rows inserted
+                                      $row = mysqli_affected_rows($connection);   
+                                      if ($row>0) {
+                                        $alert_type = 'alert-success';
+                                        $msg = 'Ad was posted successfully';
+                                      } else if ($row==0) {
+                                        $alert_type = 'alert-danger';
+                                        $msg = 'something went wrong';
+                                      }
 
-                  } else {
-                     $alert_type = 'alert-danger';
-                     $msg = 'Error: Invalid Picture Type';
-                  }
+
+                                } else {
+                                  $alert_type = 'alert-danger';
+                                  $msg = 'Error: Picture Upload Failed'; 
+                                }
+
+                            } else {
+                              $alert_type = 'alert-danger';
+                              $msg = 'Error: Invalid Filesize (only <= 2MB Allowed)'; 
+                            }
+
+                          } else {
+                            $alert_type = 'alert-danger';
+                            $msg = 'Error: Invalid Picture Type';
+                          }
 
                  
                   
-                  // if (
-                  //   strlen($name)>0&&
-                  //   strlen($category)>0&&
-                  //   strlen($brand)>0&&
-                  //   strlen($price)>0&&
-                  //   strlen($description)>0
-                  // ) {
-                     
-                     
-          
-                  //                 $status = 'pending';
-                  //                 $timestamp = time();
-                  //                 // insert in the table
-                  //                 $sql = "INSERT INTO ad_table (user_id,name,category,brand,price,description,status,timestamp) VALUES(?,?,?,?,?,?,?,?)";
-                  //                 $stmt = mysqli_prepare($connection, $sql);
-                  //                 mysqli_stmt_bind_param($stmt, 'ssssssss', $logged_user_id,$name,$category,$brand,$price,$description,$status,$timestamp);
-                  //                 mysqli_stmt_execute($stmt);
-                  //                 $row = mysqli_stmt_affected_rows($stmt);
-          
-                  //                 // check for number of rows inserted
-                  //                 $row = mysqli_affected_rows($connection);   
-                  //                 if ($row>0) {
-                  //                   $alert_type = 'alert-success';
-                  //                   $msg = 'Ad was posted successfully';
-                  //                 } else if ($row==0) {
-                  //                   $alert_type = 'alert-danger';
-                  //                   $msg = 'something went wrong';
-                  //                 }
-                        
-                            
-
-                  // } else {
-                  //    $alert_type = 'alert-danger';
-                  //    $msg     = 'Please fill all the required fields';
-                  // }
-                   
+                    } else {
+                     $alert_type = 'alert-danger';
+                     $msg     = 'Please fill all the required fields';
+                  }
+           
 
               }
          ?>
@@ -132,13 +128,19 @@
 
 
 
-                   $sql = "SELECT * FROM ad_table";
+                  if ($logged_user_type=='admin') {
+                    $sql = "SELECT * FROM ad_table";
+                  } else {
+                    $sql = "SELECT * FROM ad_table WHERE user_id='$logged_user_id'";
+                  }
+                   
                    $result = mysqli_query($connection, $sql);
-                   $n_row  = mysqli_num_rows($result);  
+                   $n_row  = (int) mysqli_num_rows($result);  
  
                    if ($n_row>0) {
                       echo '<table class="table table-striped">
                               <tr>
+                                  <th>Image</th>
                                   <th>Name</th>
                                   <th>Category</th>
                                   <th>Brand</th>
@@ -148,16 +150,19 @@
                                   <th>Date</th>
                               </tr>';
                       while ($row=mysqli_fetch_assoc($result)) {
-                        $name = $row['name'];
-                        $category = $row['category'];
-                        $brand = $row['brand'];
-                        $price = $row['price'];
-                        $status = $row['status'];
-                        $description = $row['description'];
-                        $timestamp = $row['timestamp'];
+                                $item_name = $row['name'];
+                                $category = $row['category'];
+                                $brand = $row['brand'];
+                                $price = $row['price'];
+                                $status = $row['status'];
+                                $description = $row['description'];
+                                $timestamp = $row['timestamp'];
+                                $img_name  = $row['img_name'];
+                                $imgUrl  = 'ad_pictures/'.$img_name;
 
-                        echo '  <tr>
-                                    <td>'.$name.'</td>
+                          echo '<tr>
+                                    <td><img src="'.$imgUrl.'" class="rounded" width="100" /></td>
+                                    <td>'.$item_name.'</td>
                                     <td>'.$category.'</td>
                                     <td>'.$brand.'</td>
                                     <td>'.$description.'</td>
@@ -167,9 +172,12 @@
                                 </tr>';
                       }
                       echo '</table>';
+                   } else {
+                    echo '<p class="text-center mt-5">No records found!</p>';
                    }
+
+
             ?>
- 
          
          
 
