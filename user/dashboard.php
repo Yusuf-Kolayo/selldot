@@ -110,7 +110,6 @@
             <h1 class="h2">Dashboard</h1>
 
             <div class="btn-toolbar mb-2 mb-md-0">
-       
               <button type="button" data-bs-toggle="modal" data-bs-target="#newAdModal" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
                  <i class="bi bi-plus-circle fa-icons"></i> New Ad
               </button>
@@ -119,11 +118,11 @@
 
 
 
-          <?php
-               // if there is a message available
-               if (strlen($msg)>0) {
-                  echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
-               }
+            <?php
+                  // if there is a message available
+                  if (strlen($msg)>0) {
+                      echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
+                  }
 
 
 
@@ -182,20 +181,8 @@
          
 
 
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
+ 
+ 
 
 
 

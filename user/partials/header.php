@@ -1,25 +1,108 @@
 <?php
   session_start();
 
-  $log_status = $_SESSION['log_status'];
-  $logged_user_first_name = $_SESSION['first_name']; 
-  $logged_user_id = $_SESSION['user_id']; 
-  $logged_user_type = $_SESSION['user_type']; 
-
   // var_dump($_SESSION); die();
 
-  if ($log_status!=true) {
+
+  // checks if the users is already loggwed in or not 
+  // to decide if to throw out to login page or not
+  if ($_SESSION['log_status']!=true) {
       header('location:../login.php');
   }
 
 
-  if (isset($_POST['btn_log_out'])) { // if the button submits to server
+  // responds to log out button
+  if (isset($_POST['btn_log_out'])) {  
+      // deletes all session data 
       session_destroy(); 
+      // redirect to login page
       header('location:../login.php');
   }
+
+
+ 
+
+  if (isset($_POST['btn_update_profile'])) {  // if button is submitted
+    $first_name = $_POST['first_name'];
+    $last_name  = $_POST['last_name']; 
+    $phone  = $_POST['phone'];   
+    $gender = $_POST['gender'];
+
+    if (
+      strlen($first_name)>0&&
+      strlen($last_name)>0&&
+      strlen($gender)>0&&
+      strlen($phone)>0
+    ) {
+     
+              // create a connection string
+              $connection = mysqli_connect('localhost','root','','selldot',3306);
+              
+              $user_id = $_SESSION['user_id'];
+            
+                    // insert in the table
+                    $sql = "UPDATE users SET first_name=?, last_name=?, gender=?, phone=? WHERE user_id=?";
+                    $stmt = mysqli_prepare($connection, $sql);
+                    mysqli_stmt_bind_param($stmt, 'sssss', $first_name,$last_name,$gender,$phone,$user_id);
+                    mysqli_stmt_execute($stmt);
+                    $row = mysqli_stmt_affected_rows($stmt);
+
+                    // check for number of rows inserted
+                    $row = mysqli_affected_rows($connection);   
+                    if ($row>0) {
+
+
+                        // re-update the user data currently in the session
+                        $sql2 = "SELECT * FROM users WHERE user_id=?";
+                        $stmt2 = mysqli_prepare($connection, $sql2);
+                        mysqli_stmt_bind_param($stmt2, 's', $user_id);
+                        mysqli_stmt_execute($stmt2);  
+                        $rs2 = mysqli_stmt_get_result($stmt2);
+                        $n_row2 = mysqli_num_rows($rs2);  
+                        if ($n_row2>0) {
+                                $row2 = mysqli_fetch_assoc($rs2);
+                                foreach ($row2 as $key => $value) {
+                                   $_SESSION[$key] = $value;
+                                }
+                        } 
+
+                      $alert_type = 'alert-success';
+                      $msg = 'profile update was successful';
+                    } else if ($row==0) {
+                      $alert_type = 'alert-danger';
+                      $msg = 'something went wrong';
+                    }
+         
+      
+    } else {
+       $alert_type = 'alert-danger';
+       $msg     = 'Please fill all the required fields';
+    }
+     
+     echo '<script>alert("'.$msg.'")</script>';
+}
+
+
+
+
+
+  // if all is well --> proceed to fetch the useer data from session
+  $log_status = $_SESSION['log_status'];
+  $logged_user_first_name = $_SESSION['first_name']; 
+  $logged_user_last_name = $_SESSION['last_name']; 
+  $logged_user_id = $_SESSION['user_id']; 
+  $logged_user_email = $_SESSION['email']; 
+  $logged_user_gender = $_SESSION['gender']; 
+  $logged_user_phone = $_SESSION['phone']; 
+  $logged_user_type = $_SESSION['user_type']; 
+
 
   // create a connection string
   $connection = mysqli_connect('localhost','root','','selldot',3306);
+
+
+
+
 ?>
 
 <!doctype html>
@@ -134,21 +217,7 @@
 
 
 
-    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-      <symbol id="check2" viewBox="0 0 16 16">
-        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-      </symbol>
-      <symbol id="circle-half" viewBox="0 0 16 16">
-        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
-      </symbol>
-      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
-        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
-      </symbol>
-      <symbol id="sun-fill" viewBox="0 0 16 16">
-        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-      </symbol>
-    </svg>
+    
 
     <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
       <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
