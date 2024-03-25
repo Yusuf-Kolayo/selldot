@@ -147,6 +147,7 @@
                                   <th>Price</th>
                                   <th>Status</th>
                                   <th>Date</th>
+                                  <th></th>
                               </tr>';
                       while ($row=mysqli_fetch_assoc($result)) {
                                 $item_name = $row['name'];
@@ -168,6 +169,7 @@
                                     <td>'.$price.'</td>
                                     <td>'.$status.'</td>
                                     <td>'.$timestamp.'</td>
+                                    <td><button class="btn btn-success"><i class="fas fa-edit"></i> Edit</button></td>
                                 </tr>';
                       }
                       echo '</table>';
