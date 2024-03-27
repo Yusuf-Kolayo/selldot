@@ -1,8 +1,6 @@
-<?php
+<?php require 'partials/hd.php'; ?>
+<?php require 'partials/header.php'; ?>
 
-
-
-require 'partials/header.php'; ?>
     
 <?php  require 'partials/top_nav.php'; ?>
  

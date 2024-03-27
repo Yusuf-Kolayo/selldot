@@ -1,3 +1,4 @@
+<?php require 'partials/hd.php'; ?>
 <?php require 'partials/header.php'; ?>
     
 <?php  require 'partials/top_nav.php'; ?>
@@ -118,7 +119,11 @@
 
 
 
-            <?php
+
+
+
+          <div class="view-box">
+          <?php
                   // if there is a message available
                   if (strlen($msg)>0) {
                       echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
@@ -137,7 +142,7 @@
                    $n_row  = (int) mysqli_num_rows($result);  
  
                    if ($n_row>0) {
-                      echo '<table class="table table-striped">
+                      echo '<table class="table table-striped" style="width:1100px">
                               <tr>
                                   <th>Image</th>
                                   <th>Name</th>
@@ -148,8 +153,10 @@
                                   <th>Status</th>
                                   <th>Date</th>
                                   <th></th>
+                                  <th></th>
                               </tr>';
                       while ($row=mysqli_fetch_assoc($result)) {
+                                $itemID = $row['id'];
                                 $item_name = $row['name'];
                                 $category = $row['category'];
                                 $brand = $row['brand'];
@@ -169,7 +176,8 @@
                                     <td>'.$price.'</td>
                                     <td>'.$status.'</td>
                                     <td>'.$timestamp.'</td>
-                                    <td><button class="btn btn-success"><i class="fas fa-edit"></i> Edit</button></td>
+                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
+                                    <td><button class="btn btn-danger no-wrap"><i class="fas fa-trash"></i> Delete</button></td>
                                 </tr>';
                       }
                       echo '</table>';
@@ -179,7 +187,7 @@
 
 
             ?>
-         
+          </div>
          
 
 
@@ -189,7 +197,7 @@
 
 
 
-          <!-- Modal -->
+          <!-- New Ad Item Modal -->
           <div class="modal fade" id="newAdModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -263,8 +271,41 @@
 
 
 
+
+
+             <!-- Edit Ad Item Modal -->
+            <div class="modal fade" id="editAdModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+              <form class="mb-0" action="" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="newAdModalLabel">Edit Ad</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="edit_modal_body">
+                     <div class="text-center p-5">
+                        <img src="../assets/images/preloader1.gif" width="150" alt="">
+                     </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" name="btn_submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
           </div>
         </main>
+
 
 
       </div>
