@@ -27,12 +27,12 @@
 
                   
                             if (
-              strlen($item_name)>0&&
-              strlen($category)>0&&
-              strlen($brand)>0&&
-              strlen($price)>0&&
-              strlen($description)>0
-            ) {
+                            strlen($item_name)>0&&
+                            strlen($category)>0&&
+                            strlen($brand)>0&&
+                            strlen($price)>0&&
+                            strlen($description)>0
+                          ) {
 
                           // fetch details of the picture
                           $img_name = $_FILES['picture']['name'];
@@ -104,6 +104,58 @@
            
 
               }
+
+
+
+
+
+              if (isset($_POST['btn_ad_edit'])) {
+                   
+                  $item_id   = $_POST['item_id'];
+
+                  $name = $_POST['name'];
+                  $category = $_POST['category'];
+                  $brand = $_POST['brand'];
+                  $price = $_POST['price'];
+                  $description = $_POST['description'];
+ 
+
+                  if (
+                    strlen($name)>0&&
+                    strlen($category)>0&&
+                    strlen($brand)>0&&
+                    strlen($price)>0&&
+                    strlen($description)>0
+                  ) {
+                   
+                            // create a connection string
+                            $connection = mysqli_connect('localhost','root','','selldot',3306);
+                            
+                            $user_id = $_SESSION['user_id'];
+                          
+                                  // insert in the table
+                                  $sql = "UPDATE ad_table SET name=?, category=?, brand=?, description=?, price=? WHERE id=?";
+                                  $stmt = mysqli_prepare($connection, $sql);
+                                  mysqli_stmt_bind_param($stmt, 'ssssss', $name,$category,$brand,$description,$price,$item_id);
+                                  mysqli_stmt_execute($stmt);
+                                  $row = mysqli_stmt_affected_rows($stmt);
+              
+                                  // check for number of rows inserted
+                                  $row = mysqli_affected_rows($connection);   
+                                  if ($row>0) {  
+                                    $alert_type = 'alert-success';
+                                    $msg = 'record update was successful';
+                                  } else if ($row==0) {
+                                    $alert_type = 'alert-danger';
+                                    $msg = 'something went wrong';
+                                  }
+                       
+                    
+                  } else {
+                     $alert_type = 'alert-danger';
+                     $msg     = 'Please fill all the required fields';
+                  }
+              }
          ?>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -154,6 +206,7 @@
                                   <th>Date</th>
                                   <th></th>
                                   <th></th>
+                                  <th></th>
                               </tr>';
                       while ($row=mysqli_fetch_assoc($result)) {
                                 $itemID = $row['id'];
@@ -176,6 +229,7 @@
                                     <td>'.$price.'</td>
                                     <td>'.$status.'</td>
                                     <td>'.$timestamp.'</td>
+                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdPicModal" class="btn btn-info no-wrap edit-pic-btn"><i class="fas fa-image"></i> Update Picture</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
                                     <td><button class="btn btn-danger no-wrap"><i class="fas fa-trash"></i> Delete</button></td>
                                 </tr>';
@@ -289,7 +343,36 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" name="btn_submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" name="btn_ad_edit" class="btn btn-success">Update</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+            <!-- Edit Ad Pic Item Modal -->
+            <div class="modal fade" id="editAdPicModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+              <form class="mb-0" action="" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="newAdModalLabel">Edit Ad Pic</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="edit_pic_modal_body">
+                     <div class="text-center p-5">
+                        <img src="../assets/images/preloader1.gif" width="150" alt="">
+                     </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" name="btn_edit_ad_pic" class="btn btn-primary">Submit</button>
                 </div>
                 </form>
               </div>
