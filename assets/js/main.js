@@ -20,6 +20,31 @@ window.addEventListener('load', function (){
 
 
 
+
+
+    var delete_buttons = Array.from(document.getElementsByClassName('delete-btn'))
+    delete_buttons.forEach(function(delete_button) {
+        delete_button.addEventListener('click', function (e) {
+            var button = e.target;
+            var itemID = button.getAttribute('ad-item-id')
+            console.log(itemID)
+            var data2send = {'item_id':itemID}
+            $.ajax({
+                url:"fetch_ad_delete_form.php",
+                dataType:"text",
+                method:"GET",
+                data:data2send,
+                success:function(response){
+                    $('#delete_ad_modal_body').html(response);    //  $('#sp_year').html(year);   $('#aj_msg').html('');  
+                }
+            });
+        })
+    });
+
+
+
+
+
     var edit_pic_buttons = Array.from(document.getElementsByClassName('edit-pic-btn'))
     edit_pic_buttons.forEach(function(edit_pic_button) {
         edit_pic_button.addEventListener('click', function (e) {

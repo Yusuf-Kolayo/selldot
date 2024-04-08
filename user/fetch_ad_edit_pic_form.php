@@ -24,6 +24,7 @@ if ($n_row>0) {
                 <label for="" class="form-label">New Pic</label>
                 <input name="img_name" id="img_name" type="file" class="form-control"  required>
                 <input name="item_id" type="hidden" value="'.$item_id.'" required>
+                <input name="old_img_name" type="hidden" value="'.$img_name.'" required>
             </div>';
 
  }

@@ -156,6 +156,153 @@
                      $msg     = 'Please fill all the required fields';
                   }
               }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
+              if (isset($_POST['btn_edit_ad_pic'])) { // if the button submits to server
+
+                        $item_id = $_POST['item_id']; 
+                        $old_img_name = $_POST['old_img_name']; 
+ 
+                        // fetch details of the picture
+                        $img_name = $_FILES['img_name']['name'];
+                        $type = $_FILES['img_name']['type'];
+                        $size = $_FILES['img_name']['size'];
+                        $tmp_name = $_FILES['img_name']['tmp_name'];
+
+                        $timestamp = time();
+                        $new_img_name = $logged_user_id.'_'.$timestamp.'_'.$img_name;
+
+                        // an array of alllowed file-types
+                        $allowedPicTypes = [
+                          'image/jpeg',
+                          'image/jpg',
+                          'image/png',
+                          'image/webp'
+                        ];
+
+                        // checking for the right filetype
+                        if (in_array($type, $allowedPicTypes)) {
+                            
+                          // checking for the right filesize
+                          if ($size<=2000000) {
+
+                              $result =  move_uploaded_file($tmp_name, 'ad_pictures/'.$new_img_name);
+                              if ($result==true) { // if picture upload successfull
+
+
+
+                                    $status = 'pending'; 
+                                    // insert in the table
+                                    $sql = "UPDATE ad_table SET img_name=? WHERE id=?";
+                                    $stmt = mysqli_prepare($connection, $sql);
+                                    mysqli_stmt_bind_param($stmt, 'ss', $new_img_name, $item_id);
+                                    mysqli_stmt_execute($stmt);
+                                    $row = mysqli_stmt_affected_rows($stmt);
+            
+                                    // check for number of rows inserted
+                                    $row = mysqli_affected_rows($connection);   
+                                    if ($row>0) {
+                                      $alert_type = 'alert-success';
+                                      $msg = 'Ad updated successfully';
+
+                                      // check if the old file variable is not === empty
+                                      // check if the old file exist at all
+                                      // before attempting to delete
+                                      if ($old_img_name!=''&&is_writable('ad_pictures/'.$old_img_name)) {
+                                           // delete the old file
+                                           unlink('ad_pictures/'.$old_img_name);
+                                      }
+
+
+                                    } else if ($row==0) {
+                                      $alert_type = 'alert-danger';
+                                      $msg = 'something went wrong';
+                                    }
+
+
+                              } else {
+                                $alert_type = 'alert-danger';
+                                $msg = 'Error: Picture Upload Failed'; 
+                              }
+
+                          } else {
+                            $alert_type = 'alert-danger';
+                            $msg = 'Error: Invalid Filesize (only <= 2MB Allowed)'; 
+                          }
+
+                        } else {
+                          $alert_type = 'alert-danger';
+                          $msg = 'Error: Invalid Picture Type';
+                        }
+ 
+
+              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 
+              if (isset($_POST['btn_delete_ad'])) { // if the button submits to server
+
+                $item_id = $_POST['item_id']; 
+                $old_img_name = $_POST['old_img_name']; 
+
+          
+
+                            // insert in the table
+                            $sql = "DELETE FROM ad_table WHERE id=?";
+                            $stmt = mysqli_prepare($connection, $sql);
+                            mysqli_stmt_bind_param($stmt, 's', $item_id);
+                            mysqli_stmt_execute($stmt);
+                            $row = mysqli_stmt_affected_rows($stmt);
+    
+                            // check for number of rows inserted
+                            $row = mysqli_affected_rows($connection);   
+                            if ($row>0) {
+                              $alert_type = 'alert-success';
+                              $msg = 'Ad deleted successfully';
+
+                              // check if the old file variable is not === empty
+                              // check if the old file exist at all
+                              // before attempting to delete
+                              if ($old_img_name!=''&&is_writable('ad_pictures/'.$old_img_name)) {
+                                   // delete the old file
+                                   unlink('ad_pictures/'.$old_img_name);
+                              }
+
+
+                            } else if ($row==0) {
+                              $alert_type = 'alert-danger';
+                              $msg = 'something went wrong';
+                            } 
+                
+
+
+              }
          ?>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -231,7 +378,7 @@
                                     <td>'.$timestamp.'</td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdPicModal" class="btn btn-info no-wrap edit-pic-btn"><i class="fas fa-image"></i> Update Picture</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
-                                    <td><button class="btn btn-danger no-wrap"><i class="fas fa-trash"></i> Delete</button></td>
+                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
                                 </tr>';
                       }
                       echo '</table>';
@@ -373,6 +520,36 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <button type="submit" name="btn_edit_ad_pic" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+          
+            <!-- Delete Ad Pic Item Modal -->
+            <div class="modal fade" id="deleteAdModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+              <form class="mb-0" action="" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="newAdModalLabel">Delete Ad <br>
+                    <small class="text-danger">Are you sure to proceed to delete this Ad ?</small>
+                  </h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="delete_ad_modal_body">
+                     <div class="text-center p-5">
+                        <img src="../assets/images/preloader1.gif" width="150" alt="">
+                     </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" name="btn_delete_ad" class="btn btn-danger">Confirm Delete</button>
                 </div>
                 </form>
               </div>
