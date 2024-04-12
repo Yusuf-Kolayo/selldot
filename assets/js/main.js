@@ -77,4 +77,40 @@ window.addEventListener('load', function (){
 
 
 
+
+
+
+
+    
+    var btn_update_user_dp = document.getElementById('btn_update_user_dp')
+    btn_update_user_dp.addEventListener('click', function (e) {
+            var button = e.target;
+            var userID = button.getAttribute('user-id')
+            console.log(userID)
+            var data2send = {'user_id':userID}
+            $.ajax({
+                url:"fetch_user_dp_form.php",
+                dataType:"text",
+                method:"GET",
+                data:data2send,
+                success:function(response){
+                    $('#update_user_dp_modal_body').html(response);    //  $('#sp_year').html(year);   $('#aj_msg').html('');
+                    
+                    function readURL(input) {
+                        if (input.files && input.files[0]) { 
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                $('#preview_img').attr('src', e.target.result);
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                            }
+                        }
+                        $('#img_name').change(function() { readURL(this); });
+                }
+            });
+        })
+   
+
+
+
 })

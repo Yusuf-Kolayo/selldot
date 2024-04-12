@@ -86,6 +86,95 @@
 
 
 
+
+
+
+
+
+
+
+if (isset($_POST['btn_update_user_password'])) {  // if button is submitted
+  
+  $old_password = $_POST['old_password'];
+
+  $new_password1 = $_POST['new_password1'];
+  $new_password2 = $_POST['new_password2'];
+  
+
+  if (
+    strlen($old_password)>0&&
+    strlen($new_password1)>0&&
+    strlen($new_password2)>0
+  ) {
+
+
+    if ($new_password1==$new_password2) {
+          // create a connection string
+          $connection = mysqli_connect('localhost','root','','selldot',3306);
+                      
+          $user_id = $_SESSION['user_id'];  // fetch user-id from session
+
+
+
+
+               // check for the validity of the old password
+               $sql = "SELECT * FROM users WHERE user_id=? and password=?";
+               $stmt = mysqli_prepare($connection, $sql);
+               mysqli_stmt_bind_param($stmt, 'ss', $user_id,$old_password);
+               mysqli_stmt_execute($stmt);  
+               $rs = mysqli_stmt_get_result($stmt);
+               $n_row = mysqli_num_rows($rs);  
+
+               if ($n_row>0) {
+
+                    
+                    // update password in the table
+                    $query = "UPDATE users SET password=? WHERE user_id=?";
+                    $stmt2 = mysqli_prepare($connection, $query);
+                    mysqli_stmt_bind_param($stmt2, 'ss', $new_password1,$user_id);
+                    mysqli_stmt_execute($stmt2);
+                    $row = mysqli_stmt_affected_rows($stmt2);
+
+                    // check for number of rows inserted
+                    $row = mysqli_affected_rows($connection);   
+                    if ($row>0) { 
+                      $alert_type = 'alert-success';
+                      $msg = 'password update was successful';
+
+                      // destroy session data
+                      session_destroy();
+
+                      // log out user
+                      header('location:../');
+
+                    } else if ($row==0) {
+                      $alert_type = 'alert-danger';
+                      $msg = 'something went wrong';
+                    }
+
+               } else {
+                    $alert_type = 'alert-danger';
+                    $msg = 'current password invalid';
+                }
+
+    } else {
+                $alert_type = 'alert-danger';
+                $msg = 'your passwords are not matching';
+    }
+   
+    
+  } else {
+     $alert_type = 'alert-danger';
+     $msg     = 'Please fill all the required fields';
+  }
+   
+   echo '<script>alert("'.$msg.'")</script>';
+}
+
+
+
+
+
   // if all is well --> proceed to fetch the useer data from session
   $log_status = $_SESSION['log_status'];
   $logged_user_first_name = $_SESSION['first_name']; 
