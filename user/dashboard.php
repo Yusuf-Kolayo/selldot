@@ -133,7 +133,7 @@
                             
                             $user_id = $_SESSION['user_id'];
                           
-                                  // insert in the table
+                                  // update the ad table
                                   $sql = "UPDATE ad_table SET name=?, category=?, brand=?, description=?, price=? WHERE id=?";
                                   $stmt = mysqli_prepare($connection, $sql);
                                   mysqli_stmt_bind_param($stmt, 'ssssss', $name,$category,$brand,$description,$price,$item_id);
@@ -367,6 +367,12 @@
                                 $img_name  = $row['img_name'];
                                 $imgUrl  = 'ad_pictures/'.$img_name;
 
+                                if ($status=='active') {
+                                   $check_status = 'checked';
+                                } else {
+                                  $check_status = '';
+                                }
+
                           echo '<tr>
                                     <td><img src="'.$imgUrl.'" class="rounded" width="100" /></td>
                                     <td>'.$item_name.'</td>
@@ -374,8 +380,12 @@
                                     <td>'.$brand.'</td>
                                     <td>'.$description.'</td>
                                     <td>'.$price.'</td>
-                                    <td>'.$status.'</td>
-                                    <td>'.$timestamp.'</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox" '.$check_status.' ad-item-id="'.$itemID.'" class="form-check-input switch-ad-status">
+                                        </div>
+                                    </td>
+                                    <td>'.date('d-M-Y', $timestamp).'</td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdPicModal" class="btn btn-info no-wrap edit-pic-btn"><i class="fas fa-image"></i> Update Picture</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
@@ -393,7 +403,7 @@
 
 
  
- 
+          
 
 
 

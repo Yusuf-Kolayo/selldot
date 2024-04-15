@@ -83,7 +83,8 @@ window.addEventListener('load', function (){
 
     
     var btn_update_user_dp = document.getElementById('btn_update_user_dp')
-    btn_update_user_dp.addEventListener('click', function (e) {
+    if (btn_update_user_dp) {
+        btn_update_user_dp.addEventListener('click', function (e) {
             var button = e.target;
             var userID = button.getAttribute('user-id')
             console.log(userID)
@@ -109,7 +110,32 @@ window.addEventListener('load', function (){
                 }
             });
         })
-   
+    }
+
+
+
+
+
+        var switchButtons = Array.from(document.getElementsByClassName('switch-ad-status'))
+        switchButtons.forEach(switchButton => {
+            switchButton.addEventListener('click', function () {
+                var itemID = switchButton.getAttribute('ad-item-id')
+                console.log(itemID)
+                var data2send = {'item_id':itemID}
+                $.ajax({
+                    url:"toggleAdStatus.php",
+                    dataType:"json",
+                    method:"GET",
+                    data:data2send,
+                    success:function(response){
+                        console.log(response)
+                    },
+                    error:function() {
+                        alert('something went wrong, pls try again ...')
+                    }
+                });
+            })
+        });
 
 
 

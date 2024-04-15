@@ -63,7 +63,7 @@
    // create a connection string
    $connection = mysqli_connect('localhost','root','','selldot',3306);
 
-$sql = "SELECT * FROM ad_table";
+$sql = "SELECT * FROM ad_table WHERE status='active'";
 $result = mysqli_query($connection, $sql);
 $n_row  = mysqli_num_rows($result);  
 
@@ -77,16 +77,20 @@ if ($n_row>0) {
      $status = $row['status'];
      $description = $row['description'];
      $timestamp = $row['timestamp'];
+     $img_name  = $row['img_name'];
 
+     if (strlen($description)>300) {
+        $description = substr($description, 0,220).' ...';
+     }  
    
      echo '<div class="col-md-3">
               <div class="card">
-                    <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/99/9923821/1.jpg?6560" alt="" class="card-img-top">
+                    <img src="user/ad_pictures/'.$img_name.'" alt="" class="card-img-top">
                     <div class="card-body">
                         <h4 class="mb-1">'.$name.'</h4>
                         <p class="mb-0">
                           <small>
-                             Price: &#8358;;'.$price.' <br> '.$description.'<br>
+                             Price: &#8358;'.$price.' <br> '.$description.'<br>
                           </small>
                         </p>
                     </div>
