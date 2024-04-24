@@ -21,6 +21,8 @@ window.addEventListener('load', function (){
 
 
 
+    
+
 
     var delete_buttons = Array.from(document.getElementsByClassName('delete-btn'))
     delete_buttons.forEach(function(delete_button) {
@@ -40,6 +42,7 @@ window.addEventListener('load', function (){
             });
         })
     });
+
 
 
 
@@ -74,7 +77,6 @@ window.addEventListener('load', function (){
             });
         })
     });
-
 
 
 
@@ -116,26 +118,27 @@ window.addEventListener('load', function (){
 
 
 
-        var switchButtons = Array.from(document.getElementsByClassName('switch-ad-status'))
-        switchButtons.forEach(switchButton => {
-            switchButton.addEventListener('click', function () {
-                var itemID = switchButton.getAttribute('ad-item-id')
-                console.log(itemID)
-                var data2send = {'item_id':itemID}
-                $.ajax({
-                    url:"toggleAdStatus.php",
-                    dataType:"json",
-                    method:"GET",
-                    data:data2send,
-                    success:function(response){
-                        console.log(response)
-                    },
-                    error:function() {
-                        alert('something went wrong, pls try again ...')
-                    }
-                });
-            })
-        });
+
+    var switchButtons = Array.from(document.getElementsByClassName('switch-ad-status'))
+    switchButtons.forEach(switchButton => {
+        switchButton.addEventListener('click', function () {
+            var itemID = switchButton.getAttribute('ad-item-id')
+            console.log(itemID)
+            var data2send = {'item_id':itemID}
+            $.ajax({
+                url:"toggleAdStatus.php",
+                dataType:"json",
+                method:"GET",
+                data:data2send,
+                success:function(response){
+                    console.log(response)
+                },
+                error:function() {
+                    alert('something went wrong, pls try again ...')
+                }
+            });
+        })
+    });
 
 
 

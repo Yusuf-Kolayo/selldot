@@ -348,9 +348,13 @@
                                   <th>Category</th>
                                   <th>Brand</th>
                                   <th>Description</th>
-                                  <th>Price</th>
-                                  <th>Status</th>
-                                  <th>Date</th>
+                                  <th>Price</th>';
+
+                            if ($logged_user_type=='admin') { 
+                              echo '<th>Status</th>';
+                            }
+
+                            echo '<th>Date</th>
                                   <th></th>
                                   <th></th>
                                   <th></th>
@@ -379,13 +383,17 @@
                                     <td>'.$category.'</td>
                                     <td>'.$brand.'</td>
                                     <td>'.$description.'</td>
-                                    <td>'.$price.'</td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input type="checkbox" '.$check_status.' ad-item-id="'.$itemID.'" class="form-check-input switch-ad-status">
-                                        </div>
-                                    </td>
-                                    <td>'.date('d-M-Y', $timestamp).'</td>
+                                    <td>'.$price.'</td>';
+
+                                    if ($logged_user_type=='admin') { 
+                                        echo '<td>
+                                                  <div class="form-check form-switch">
+                                                      <input type="checkbox" '.$check_status.' ad-item-id="'.$itemID.'" class="form-check-input switch-ad-status">
+                                                  </div>
+                                              </td>'; 
+                                    }
+
+                              echo '<td>'.date('d-M-Y', $timestamp).'</td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdPicModal" class="btn btn-info no-wrap edit-pic-btn"><i class="fas fa-image"></i> Update Picture</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
                                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
@@ -432,7 +440,7 @@
                               <option value="Cars & spare parts">Cars & spare parts</option>
                               <option value="Laptops & accessories">Laptops & accessories</option>
                               <option value="Building materials">Building materials</option>
-                              <option value="Property">Property => Land, homes</option>
+                              <option value="Property">Property</option>
                               <option value="Wristwatches">Wristwatches</option>
                               <option value="Toys">Toys</option>
                               <option value="Refrigerators">Refrigerators</option>

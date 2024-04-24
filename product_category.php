@@ -14,30 +14,34 @@
     </style>
 </head>
 <body>
-  
+
 <?php require 'header.php' ?>
 
-<div class="bg-light border p-5 text-center" style="height:400px">
-        <h1 class="display-1 pt-3">Wellcome To SellDot!</h1>
-        <p class="lead">A convenient marketplace for buyers and sellers</p> 
-        <p class="mb-0 border-top w-75 mx-auto pt-5">
-             <a href="login.php" class="btn btn-lg btn-outline-dark w-25">Login</a>
-             <a href="register.php" class="btn btn-lg btn-dark w-25">Register</a>
-        </p>
+<div class="bg-light border p-4 text-center" >  
+        <p class="display-6">Product Under Category <ins><b><q><?=$_GET['category']?></q></b></ins></p> 
 </div>
 
 
 
 <div class="row mt-4">
-<?php 
+<?php
 
-$sql = "SELECT * FROM ad_table WHERE status='active'";
-$result = mysqli_query($connection, $sql);
-$n_row  = mysqli_num_rows($result);  
+   // create a connection string
+   $connection = mysqli_connect('localhost','root','','selldot',3306);
+   $category = '%'.$_GET['category'].'%';
+
+   
+$sql = "SELECT * FROM ad_table WHERE category LIKE ?";
+$stmt = mysqli_prepare($connection, $sql);
+mysqli_stmt_bind_param($stmt, 's', $category);
+mysqli_stmt_execute($stmt);  
+$rs = mysqli_stmt_get_result($stmt);
+$n_row = mysqli_num_rows($rs);  
 
 if ($n_row>0) {
 
-   while ($row=mysqli_fetch_assoc($result)) {
+
+   while ($row=mysqli_fetch_assoc($rs)) {
      $name = $row['name'];
      $category = $row['category'];
      $brand = $row['brand'];
@@ -65,6 +69,8 @@ if ($n_row>0) {
               </div>
           </div>';
    }
+} else {
+    echo '<p class="h6 text-center">No record found ...</p>';
 }
 
 
