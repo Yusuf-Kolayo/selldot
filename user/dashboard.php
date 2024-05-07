@@ -336,6 +336,8 @@
                   } else {
                     $sql = "SELECT * FROM ad_table WHERE user_id='$logged_user_id'";
                   }
+
+                  // echo $sql;
                    
                    $result = mysqli_query($connection, $sql);
                    $n_row  = (int) mysqli_num_rows($result);  

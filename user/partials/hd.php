@@ -1,7 +1,7 @@
 <?php
-  session_start();
+  session_start();   $msg = '';
 
-  // var_dump($_SESSION); die();
+  //  var_dump($_SESSION); die();
 
 
   // checks if the users is already loggwed in or not 
@@ -113,25 +113,26 @@ if (isset($_POST['btn_update_user_password'])) {  // if button is submitted
           $connection = mysqli_connect('localhost','root','','selldot',3306);
                       
           $user_id = $_SESSION['user_id'];  // fetch user-id from session
-
-
-
+       
+ 
 
                // check for the validity of the old password
-               $sql = "SELECT * FROM users WHERE user_id=? and password=?";
+               $sql = "SELECT password FROM users WHERE user_id=?";
                $stmt = mysqli_prepare($connection, $sql);
-               mysqli_stmt_bind_param($stmt, 'ss', $user_id,$old_password);
+               mysqli_stmt_bind_param($stmt, 's', $user_id);
                mysqli_stmt_execute($stmt);  
                $rs = mysqli_stmt_get_result($stmt);
-               $n_row = mysqli_num_rows($rs);  
+               $n_row = mysqli_num_rows($rs);      
+               $old_password_hash = mysqli_fetch_assoc($rs)['password'];
 
-               if ($n_row>0) {
 
+             if (password_verify($old_password, $old_password_hash)) {
                     
+                  $hashed_password = password_hash($new_password2, PASSWORD_DEFAULT);
                     // update password in the table
                     $query = "UPDATE users SET password=? WHERE user_id=?";
                     $stmt2 = mysqli_prepare($connection, $query);
-                    mysqli_stmt_bind_param($stmt2, 'ss', $new_password1,$user_id);
+                    mysqli_stmt_bind_param($stmt2, 'ss', $hashed_password,$user_id);
                     mysqli_stmt_execute($stmt2);
                     $row = mysqli_stmt_affected_rows($stmt2);
 
@@ -152,10 +153,10 @@ if (isset($_POST['btn_update_user_password'])) {  // if button is submitted
                       $msg = 'something went wrong';
                     }
 
-               } else {
-                    $alert_type = 'alert-danger';
-                    $msg = 'current password invalid';
-                }
+              } else {
+                  $alert_type = 'alert-danger';
+                  $msg = 'current password invalid';
+              }
 
     } else {
                 $alert_type = 'alert-danger';

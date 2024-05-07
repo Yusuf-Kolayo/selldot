@@ -1,7 +1,5 @@
 <?php 
-  $msg = '';
   require ('../functions.php');
-  
 ?>
 
 

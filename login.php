@@ -2,8 +2,6 @@
 
     require 'functions.php';  $row = '';   $msg = '';
 
-    
-
 
     if (isset($_POST['btn_submit'])) {  // if button is submitted
 
@@ -17,24 +15,32 @@
                   $connection = mysqli_connect('localhost','root','','selldot',3306);
 
                   // check for the prescence of email in the DB
-                  $sql = "SELECT * FROM users WHERE email=? and password=?";
+                  $sql = "SELECT * FROM users WHERE email=?";
                   $stmt = mysqli_prepare($connection, $sql);
-                  mysqli_stmt_bind_param($stmt, 'ss', $email,$password);
+                  mysqli_stmt_bind_param($stmt, 's', $email);
                   mysqli_stmt_execute($stmt);  
-                  $rs = mysqli_stmt_get_result($stmt);
-                  $n_row = mysqli_num_rows($rs);  
+                  $result = mysqli_stmt_get_result($stmt);
+                  $n_row = mysqli_num_rows($result);  
 
                   if ($n_row>0) {
-                        $row = mysqli_fetch_assoc($rs);
-                        
-                        // register user in session
-                        $_SESSION['log_status'] = true;
+                    $row = mysqli_fetch_array($result);
+                    $old_password_hash = $row['password'];
 
-                        foreach ($row as $key => $value) {
-                           $_SESSION[$key] = $value;
-                        }
-                       
-                        header('location:user/dashboard.php');
+                    if (password_verify($password, $old_password_hash)) {
+                        
+                          // register user in session
+                          $_SESSION['log_status'] = true;
+
+                          foreach ($row as $key => $value) {
+                              $_SESSION[$key] = $value;
+                          }
+                        
+                          header('location:user/dashboard.php');
+                    } else {
+                          $alert_type = 'alert-danger';
+                          $msg = 'Login credentials invalid!';
+                    }  
+                  
                   } else {
                     $alert_type = 'alert-danger';
                     $msg = 'Login credentials invalid!';

@@ -24,6 +24,9 @@
         ) {
                 // chceck if the passwords maches
                 if ($password===$confirm_password) {
+
+                  $hashed_password = password_hash($confirm_password, PASSWORD_DEFAULT);
+
                   // create a connection string
                   $connection = mysqli_connect('localhost','root','','selldot',3306);
 
@@ -39,7 +42,7 @@
                         // insert in the table
                         $sql = "INSERT INTO users (first_name,last_name,email,user_type,phone,gender,password) VALUES(?,?,?,?,?,?,?)";
                         $stmt = mysqli_prepare($connection, $sql);
-                        mysqli_stmt_bind_param($stmt, 'sssssss', $first_name,$last_name,$email,$user_type,$phone,$gender,$password);
+                        mysqli_stmt_bind_param($stmt, 'sssssss', $first_name,$last_name,$email,$user_type,$phone,$gender,$hashed_password);
                         mysqli_stmt_execute($stmt);
                         $row = mysqli_stmt_affected_rows($stmt);
 
