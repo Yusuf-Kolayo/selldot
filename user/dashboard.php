@@ -15,6 +15,17 @@
               sort($brands);
               $brands = array_unique($brands);
 
+              // fetch the categories
+              $categories = [];
+              $sql = "SELECT name FROM categories";  
+              $result = mysqli_query($connection, $sql);
+              $n_row  = (int) mysqli_num_rows($result);  
+              if ($n_row>0) {
+                  while ($row = mysqli_fetch_assoc($result)) {
+                      $categories[] = $row;
+                  }
+              }
+
 
 
               if (isset($_POST['btn_submit'])) { // if the button submits to server
@@ -160,18 +171,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
               
               if (isset($_POST['btn_edit_ad_pic'])) { // if the button submits to server
 
@@ -252,15 +251,6 @@
  
 
               }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -432,21 +422,11 @@
                         <div class="mb-3">
                           <label for="" class="form-label">Categories</label>
                           <select name="category" class="form-select" required>
-                              <option value="Electronics">Electronics</option>
-                              <option value="Phones and acessories">Phones and acessories</option>
-                              <option value="Food & Beverages">Food & Beverages</option>
-                              <option value="Clothing">Clothing</option>
-                              <option value="Furnitures">Furnitures</option>
-                              <option value="Health and lifestyle">Health and lifestyle</option>
-                              <option value="Footwears">Footwears</option>
-                              <option value="Cars & spare parts">Cars & spare parts</option>
-                              <option value="Laptops & accessories">Laptops & accessories</option>
-                              <option value="Building materials">Building materials</option>
-                              <option value="Property">Property</option>
-                              <option value="Wristwatches">Wristwatches</option>
-                              <option value="Toys">Toys</option>
-                              <option value="Refrigerators">Refrigerators</option>
-                              <option value="Generators">Generators</option>
+                              <?php
+                                  foreach ($categories as $key => $category) {
+                                      echo '<option value="'.$category['name'].'">'.$category['name'].'</option>';
+                                  }
+                              ?>
                           </select>
                         </div>
                         <div class="mb-3">

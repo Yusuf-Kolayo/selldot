@@ -63,73 +63,48 @@ if (isset($_POST['btn_category_submit'])) {
 
 
                 
-                //   $sql = "SELECT * FROM ad_table WHERE user_id='$logged_user_id'";  
-                //    $result = mysqli_query($connection, $sql);
-                //    $n_row  = (int) mysqli_num_rows($result);  
+                  $sql = "SELECT * FROM categories";
+                   $result = mysqli_query($connection, $sql);
+                   $n_row  = (int) mysqli_num_rows($result);  
  
-                //    if ($n_row>0) {
-                //       echo '<table class="table table-striped" style="width:1100px">
-                //               <tr>
-                //                   <th>Image</th>
-                //                   <th>Name</th>
-                //                   <th>Category</th>
-                //                   <th>Brand</th>
-                //                   <th>Description</th>
-                //                   <th>Price</th>';
+                   if ($n_row>0) {
+                      echo '<table class="table table-striped table-bordered" style="width:1100px">
+                              <tr>
+                                  <th>Name</th>
+                                  <th>Description</th>
+                                  <th>Parent</th>
+                                  <th>Status</th>
+                                <th>position</th>
+                                <th>Date</th>
+                                  <th></th>
+                                  <th></th>
+                              </tr>';
+                      while ($row=mysqli_fetch_assoc($result)) {
+                                $itemID = $row['id'];
+                                $item_name = $row['name'];
+                                $description = $row['description'];
+                                $parent_id   = $row['parent_id'];
+                                $position    = $row['position'];
+                                $status = $row['status'];
+                                $timestamp = $row['timestamp'];
+                          echo '<tr>
+                                    <td>'. $item_name.'</td>
+                                    <td>'. $description.'</td>
+                                    <td>'. $parent_id.'</td>
+                                    <td>'.$status.'</td>
+                                    <td>'.$position .'</td>
+                                    <td>'.date('d-M-Y', $timestamp).'</td>';
+                               echo '
+                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
+                                    
+                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
+                                </tr>';
+                      }
+                      echo '</table>';
+                   } else {
+                    echo '<p class="text-center mt-5">No records found!</p>';
+                   }
 
-                //             if ($logged_user_type=='admin') { 
-                //               echo '<th>Status</th>';
-                //             }
-
-                //             echo '<th>Date</th>
-                //                   <th></th>
-                //                   <th></th>
-                //                   <th></th>
-                //               </tr>';
-                //       while ($row=mysqli_fetch_assoc($result)) {
-                //                 $itemID = $row['id'];
-                //                 $item_name = $row['name'];
-                //                 $category = $row['category'];
-                //                 $brand = $row['brand'];
-                //                 $price = $row['price'];
-                //                 $status = $row['status'];
-                //                 $description = $row['description'];
-                //                 $timestamp = $row['timestamp'];
-                //                 $img_name  = $row['img_name'];
-                //                 $imgUrl  = 'ad_pictures/'.$img_name;
-
-                //                 if ($status=='active') {
-                //                    $check_status = 'checked';
-                //                 } else {
-                //                   $check_status = '';
-                //                 }
-
-                //           echo '<tr>
-                //                     <td><img src="'.$imgUrl.'" class="rounded" width="100" /></td>
-                //                     <td>'.$item_name.'</td>
-                //                     <td>'.$category.'</td>
-                //                     <td>'.$brand.'</td>
-                //                     <td>'.$description.'</td>
-                //                     <td>'.$price.'</td>';
-
-                //                     if ($logged_user_type=='admin') { 
-                //                         echo '<td>
-                //                                   <div class="form-check form-switch">
-                //                                       <input type="checkbox" '.$check_status.' ad-item-id="'.$itemID.'" class="form-check-input switch-ad-status">
-                //                                   </div>
-                //                               </td>'; 
-                //                     }
-
-                //               echo '<td>'.date('d-M-Y', $timestamp).'</td>
-                //                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdPicModal" class="btn btn-info no-wrap edit-pic-btn"><i class="fas fa-image"></i> Update Picture</button></td>
-                //                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
-                //                     <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
-                //                 </tr>';
-                //       }
-                //       echo '</table>';
-                //    } else {
-                //     echo '<p class="text-center mt-5">No records found!</p>';
-                //    }
 
 
             ?>
