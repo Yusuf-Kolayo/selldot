@@ -6,14 +6,9 @@
     if (isset($_POST['btn_submit'])) {  // if button is submitted
 
         $email  = $_POST['email'];
-        $password  = $_POST['password'];
 
-        if ( strlen($email)>0&& strlen($password)>0 ) {
-             
-          
-                  // create a connection string
-                  $connection = mysqli_connect('localhost','root','','selldot',3306);
-
+        if (strlen($email)>0) {
+               
                   // check for the prescence of email in the DB
                   $sql = "SELECT * FROM users WHERE email=?";
                   $stmt = mysqli_prepare($connection, $sql);
@@ -23,32 +18,30 @@
                   $n_row = mysqli_num_rows($result);  
 
                   if ($n_row>0) {
-                    $row = mysqli_fetch_array($result);
-                    $old_password_hash = $row['password'];
 
-                    if (password_verify($password, $old_password_hash)) {
-                        
-                          // register user in session
-                          $_SESSION['log_status'] = true;
+                       // send a reset link to the mail address
 
-                          foreach ($row as $key => $value) {
-                              $_SESSION[$key] = $value;
-                          }
-                        
-                          header('location:user/dashboard.php');
-                    } else {
-                          $alert_type = 'alert-danger';
-                          $msg = 'Login credentials invalid!';
-                    }  
+                       // table : security_codes
+
+                       // id 
+                       // channel
+                       // channel_value
+                       // code
+                       // status
+                       // timestamp
+
+                       // generate a valid code
+
+                       // send the valid code to the mail address using PHP-Mailer
                   
                   } else {
                     $alert_type = 'alert-danger';
-                    $msg = 'Login credentials invalid!';
+                    $msg = 'Your email address does not match any of our records ...';
                   }
              
         } else {
            $alert_type = 'alert-danger';
-           $msg     = 'Please fill all the required fields';
+           $msg     = 'Please fill in your email address fields';
         }
          
  
@@ -72,18 +65,12 @@
 <body>
 
 
-
 <?php require 'public_nav.php'; ?>
-
+ 
 
 <div class="bg-light border px-5 py-3 text-center" >
-        <h1 class="display-1 mt-0">Login</h1>
-        <p class="lead">Fill in the fields below with the accurate information</p> 
-        <p class="text-center">
-                  <small>
-                    If you don't own an account... <a href="forget_password.php">register here</a>
-                  </small>
-       </p>
+        <h1 class="display-5 mt-0">Forget Password</h1>
+        <p class="lead small">please enter your e-mail address below correctly</p> 
 </div>
 
 <div class="row mt-5">
@@ -101,29 +88,17 @@
                   <span class="input-group-text">Email</span>
                   <input type="email" class="form-control" name="email">
                 </div>
-  
-                <div class="input-group mb-3">
-                  <span class="input-group-text">Password</span>
-                  <input type="password" class="form-control" name="password">
-                </div>
- 
                
                 <div class="row">
                     <div class="col-6">
                         <button type="reset" class="btn btn-primary">Clear</button>
                     </div>
                     <div class="col-6 text-end">
-                        <button type="submit" name="btn_submit" class="btn btn-primary">Log In</button>
+                        <button type="submit" name="btn_submit" class="btn btn-primary">Submit</button>
                     </div>
                 </div>
 
-                <br>
-
-                <p class="text-center">
-                  <small>
-                   .. forget password ? <a href="forget_password.php">click here</a>
-                  </small>
-                </p>
+             
             </form>
       </div>
 </div>
