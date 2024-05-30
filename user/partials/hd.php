@@ -20,7 +20,8 @@
   }
 
 
- 
+  require '../connection.php';
+   
 
   if (isset($_POST['btn_update_profile'])) {  // if button is submitted
     $first_name = $_POST['first_name'];
@@ -35,8 +36,7 @@
       strlen($phone)>0
     ) {
      
-              // create a connection string
-              $connection = mysqli_connect('localhost','root','','selldot',3306);
+  
               
               $user_id = $_SESSION['user_id'];
             
@@ -109,8 +109,7 @@ if (isset($_POST['btn_update_user_password'])) {  // if button is submitted
 
 
     if ($new_password1==$new_password2) {
-          // create a connection string
-          $connection = mysqli_connect('localhost','root','','selldot',3306);
+         
                       
           $user_id = $_SESSION['user_id'];  // fetch user-id from session
        
@@ -187,8 +186,7 @@ if (isset($_POST['btn_update_user_password'])) {  // if button is submitted
   $logged_user_type = $_SESSION['user_type']; 
 
 
-  // create a connection string
-  $connection = mysqli_connect('localhost','root','','selldot',3306);
+
 
 
 

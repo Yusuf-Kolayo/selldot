@@ -1,6 +1,18 @@
 <?php  session_start();
 
+    require_once 'connection.php';
+
     require 'functions.php';  $row = '';   $msg = '';
+
+
+    require 'vendor/autoload.php';
+
+    // Import the PHPMailer class
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
+
+ 
 
 
     if (isset($_POST['btn_submit'])) {  // if button is submitted
@@ -18,21 +30,58 @@
                   $n_row = mysqli_num_rows($result);  
 
                   if ($n_row>0) {
-
-                       // send a reset link to the mail address
+                       $timestamp     = time();
+                       $status        = 'sent';
+                       $channel       = 'email';
+                       $channel_value = $email;
 
                        // table : security_codes
+                       $track_code=1;
+                        while ($track_code<=1)
+                        {
+                            $code = intval(rand(100001,999999)); 
 
-                       // id 
-                       // channel
-                       // channel_value
-                       // code
-                       // status
-                       // timestamp
+                            $strk = "select code from security_codes where code = '$code'";
+                            $scb = mysqli_query($connection,$strk) or die ('couldnt search');
+                            $nr = mysqli_num_rows($scb);
+                        
+                                if ($nr==0)                                          
+                                { 
+                                    $que = "insert into security_codes (channel, channel_value, code, status, timestamp)  values ('$channel','$channel_value','$code','$status','$timestamp')";
+                                    $cmd = mysqli_query($connection,$que);
+                                    $track_code++;
+                                }                                        
+                                                                                                                                        
+                        }	
 
-                       // generate a valid code
+                  
+                        
+                        
+                        $mail = new PHPMailer(true);
+                        $mail->IsSMTP(); // telling the class to use SMTP
+                        $mail->SMTPAuth = true; // enable SMTP authentication  
+                        $mail->CharSet = 'utf-8';
+                        //$mail->SMTPDebug = 2;
+                        $mail->Host = "localhost"; // sets the SMTP server
+                        $mail->Port = 25; // set the SMTP port for the GMAIL server
+                        $mail->Username = "info@salehub.qatru.com"; // SMTP account username
+                        $mail->Password = "n3JC!VWea2#1"; // SMTP account password
+                        $mail->isHTML(true);
+                        $mail->SetFrom('info@salehub.qatru.com', 'SaleHub');
+                        $mail->AddReplyTo('info@salehub.qatru.com', 'SaleHub');
+                        $mail->Subject = "Password Reset";
+                        $mail->MsgHTML('<html><body><br> Your Password Reset Code is '.$code.'</body></html>');
+                        $mail->AddAddress($email);
+                        //$mail->AddAttachment(""); // attachment
 
-                       // send the valid code to the mail address using PHP-Mailer
+                        if(!$mail->Send()) { 
+                            $alert_type = 'alert-danger';
+                            $msg = 'Could not send reset code to your email address. Please try again ...';
+                        } else {
+                            $_SESSION['code_sent_email'] = $email;
+                            header("Location: verify_reset_code.php");
+                        }
+                    
                   
                   } else {
                     $alert_type = 'alert-danger';

@@ -1,6 +1,6 @@
 <?php
     // create a connection string
-    $connection = mysqli_connect('localhost','root','','selldot',3306);
+    require 'connection.php';
 ?><nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">SellDot</a>

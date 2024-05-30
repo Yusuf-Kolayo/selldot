@@ -2,6 +2,8 @@
 
     require 'functions.php';  $row = '';   $msg = '';
 
+    require 'connection.php';
+
 
     if (isset($_POST['btn_submit'])) {  // if button is submitted
         $first_name = $_POST['first_name'];
@@ -26,9 +28,7 @@
                 if ($password===$confirm_password) {
 
                   $hashed_password = password_hash($confirm_password, PASSWORD_DEFAULT);
-
-                  // create a connection string
-                  $connection = mysqli_connect('localhost','root','','selldot',3306);
+ 
 
                   // check for the prescence of email in the DB
                   $sql = "SELECT user_id FROM users WHERE email=?";

@@ -1,5 +1,7 @@
 <?php  session_start();
 
+    require 'connection.php';
+
     require 'functions.php';  $row = '';   $msg = '';
 
 
@@ -12,7 +14,7 @@
              
           
                   // create a connection string
-                  $connection = mysqli_connect('localhost','root','','selldot',3306);
+                
 
                   // check for the prescence of email in the DB
                   $sql = "SELECT * FROM users WHERE email=?";
@@ -81,7 +83,7 @@
         <p class="lead">Fill in the fields below with the accurate information</p> 
         <p class="text-center">
                   <small>
-                    If you don't own an account... <a href="forget_password.php">register here</a>
+                    If you don't own an account... <a href="register.php">register here</a>
                   </small>
        </p>
 </div>

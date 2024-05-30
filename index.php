@@ -175,7 +175,7 @@
                 $name = $row['name'];
                 $category = $row['category'];
                 $brand = $row['brand'];
-                $price = $row['price'];
+                $price = number_format($row['price']);
                 $status = $row['status'];
                 $description = $row['description'];
                 $timestamp = $row['timestamp'];

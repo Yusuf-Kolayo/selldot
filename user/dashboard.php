@@ -139,8 +139,8 @@
                     strlen($description)>0
                   ) {
                    
-                            // create a connection string
-                            $connection = mysqli_connect('localhost','root','','selldot',3306);
+                           
+                    
                             
                             $user_id = $_SESSION['user_id'];
                           
