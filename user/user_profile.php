@@ -88,11 +88,6 @@ if (isset($_POST['btn_update_user_dp'])) { // if the button submits to server
 
 
 
- 
-
-
-
-
 
 
 

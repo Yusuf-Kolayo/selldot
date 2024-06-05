@@ -4,96 +4,63 @@
 
     require 'functions.php';  $row = '';   $msg = '';
 
-
-    require 'vendor/autoload.php';
-
-    // Import the PHPMailer class
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\SMTP;
-    use PHPMailer\PHPMailer\Exception;
-
  
 
+    // Check if the form is submitted
+    if (isset($_POST['btn_submit'])) {  
 
-    if (isset($_POST['btn_submit'])) {  // if button is submitted
+        // Get the email input from the form
+        $email = $_POST['email'];
 
-        $email  = $_POST['email'];
+        // Check if the email field is not empty
+        if (strlen($email) > 0) {
+                
+            // Check if the email exists in the database
+            $sql = "SELECT * FROM users WHERE email=?";
+            $stmt = mysqli_prepare($connection, $sql);
+            mysqli_stmt_bind_param($stmt, 's', $email);
+            mysqli_stmt_execute($stmt);  
+            $result = mysqli_stmt_get_result($stmt);
+            $n_row = mysqli_num_rows($result);  
 
-        if (strlen($email)>0) {
-               
-                  // check for the prescence of email in the DB
-                  $sql = "SELECT * FROM users WHERE email=?";
-                  $stmt = mysqli_prepare($connection, $sql);
-                  mysqli_stmt_bind_param($stmt, 's', $email);
-                  mysqli_stmt_execute($stmt);  
-                  $result = mysqli_stmt_get_result($stmt);
-                  $n_row = mysqli_num_rows($result);  
+            // If the email exists in the database
+            if ($n_row > 0) {
+                $channel = 'email';         $status = 'sent';
+                $channel_value = $email;    $timestamp = time();
 
-                  if ($n_row>0) {
-                       $timestamp     = time();
-                       $status        = 'sent';
-                       $channel       = 'email';
-                       $channel_value = $email;
-
-                       // table : security_codes
-                       $track_code=1;
-                        while ($track_code<=1)
-                        {
-                            $code = intval(rand(100001,999999)); 
-
-                            $strk = "select code from security_codes where code = '$code'";
-                            $scb = mysqli_query($connection,$strk) or die ('couldnt search');
-                            $nr = mysqli_num_rows($scb);
-                        
-                                if ($nr==0)                                          
-                                { 
-                                    $que = "insert into security_codes (channel, channel_value, code, status, timestamp)  values ('$channel','$channel_value','$code','$status','$timestamp')";
-                                    $cmd = mysqli_query($connection,$que);
-                                    $track_code++;
-                                }                                        
-                                                                                                                                        
-                        }	
-
-                  
-                        
-                        
-                        $mail = new PHPMailer(true);
-                        $mail->IsSMTP(); // telling the class to use SMTP
-                        $mail->SMTPAuth = true; // enable SMTP authentication  
-                        $mail->CharSet = 'utf-8';
-                        //$mail->SMTPDebug = 2;
-                        $mail->Host = "localhost"; // sets the SMTP server
-                        $mail->Port = 25; // set the SMTP port for the GMAIL server
-                        $mail->Username = "info@salehub.qatru.com"; // SMTP account username
-                        $mail->Password = "n3JC!VWea2#1"; // SMTP account password
-                        $mail->isHTML(true);
-                        $mail->SetFrom('info@salehub.qatru.com', 'SaleHub');
-                        $mail->AddReplyTo('info@salehub.qatru.com', 'SaleHub');
-                        $mail->Subject = "Password Reset";
-                        $mail->MsgHTML('<html><body><br> Your Password Reset Code is '.$code.'</body></html>');
-                        $mail->AddAddress($email);
-                        //$mail->AddAttachment(""); // attachment
-
-                        if(!$mail->Send()) { 
-                            $alert_type = 'alert-danger';
-                            $msg = 'Could not send reset code to your email address. Please try again ...';
-                        } else {
-                            $_SESSION['code_sent_email'] = $email;
-                            header("Location: verify_reset_code.php");
-                        }
-                    
-                  
-                  } else {
+                // Generate a security code
+                $code = generate_security_code($connection);
+                
+                $que = "insert into security_codes (channel, channel_value, code, status, timestamp)  values ('$channel','$channel_value','$code','$status','$timestamp')";
+                $cmd = mysqli_query($connection,$que);
+                
+                // Send an email with the security code
+                // $result = send_mail($email, $subject = 'Password Reset', $body = '<html><body><br> Your Password Reset Code is ' . $code . '</body></html>');
+                
+                // If the email was sent successfully
+                if ($result = true) {
+                    // Store the email in the session
+                    $_SESSION['code_sent_email'] = $email;
+                    // Redirect the user to the verify reset code page
+                    header("Location: verify_reset_code.php");
+                } else {
+                    // If the email failed to send, display an error message
                     $alert_type = 'alert-danger';
-                    $msg = 'Your email address does not match any of our records ...';
-                  }
-             
+                    $msg = 'Something went wrong please try again';
+                    js_alert($msg);
+                }
+                        
+            } else {
+                // If the email does not exist in the database, display an error message
+                $alert_type = 'alert-danger';
+                $msg = 'Your email address does not match any of our records ...';
+            }
+                
         } else {
-           $alert_type = 'alert-danger';
-           $msg     = 'Please fill in your email address fields';
+            // If the email field is empty, display an error message
+            $alert_type = 'alert-danger';
+            $msg     = 'Please fill in your email address fields';
         }
-         
- 
     }
 ?>
 <!DOCTYPE html>
@@ -135,7 +102,7 @@
 
                 <div class="input-group mb-3">
                   <span class="input-group-text">Email</span>
-                  <input type="email" class="form-control" name="email">
+                  <input type="email" class="form-control" name="email" required>
                 </div>
                
                 <div class="row">
