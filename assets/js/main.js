@@ -1,6 +1,7 @@
 window.addEventListener('load', function (){
-    var edit_buttons = Array.from(document.getElementsByClassName('edit-btn'))
-    edit_buttons.forEach(function(edit_button) {
+    
+    var edit_ad_buttons = Array.from(document.getElementsByClassName('edit-ad-btn'))
+    edit_ad_buttons.forEach(function(edit_button) {
         edit_button.addEventListener('click', function (e) {
             var button = e.target;
             var itemID = button.getAttribute('ad-item-id')
@@ -24,8 +25,8 @@ window.addEventListener('load', function (){
     
 
 
-    var delete_buttons = Array.from(document.getElementsByClassName('delete-btn'))
-    delete_buttons.forEach(function(delete_button) {
+    var delete_ad_buttons = Array.from(document.getElementsByClassName('delete-ad-btn'))
+    delete_ad_buttons.forEach(function(delete_button) {
         delete_button.addEventListener('click', function (e) {
             var button = e.target;
             var itemID = button.getAttribute('ad-item-id')
@@ -77,6 +78,36 @@ window.addEventListener('load', function (){
             });
         })
     });
+
+
+
+
+
+
+
+
+    var edit_category_buttons = Array.from(document.getElementsByClassName('edit-category-btn'))
+    edit_category_buttons.forEach(function(edit_button) {
+        edit_button.addEventListener('click', function (e) {
+            var button = e.target;
+            var categtoryID = button.getAttribute('category-id')
+            console.log(categtoryID)
+            var data2send = {'category_id':categtoryID}
+
+            $('#edit_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
+
+            $.ajax({
+                url:"fetch_category_edit_form.php",
+                dataType:"text",
+                method:"GET",
+                data:data2send,
+                success:function(response){
+                     $('#edit_modal_body').html(response);
+                }
+            });
+        })
+    });
+
 
 
 

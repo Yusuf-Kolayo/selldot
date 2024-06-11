@@ -80,7 +80,7 @@ if (isset($_POST['btn_category_submit'])) {
                                   <th></th>
                               </tr>';
                       while ($row=mysqli_fetch_assoc($result)) {
-                                $itemID = $row['id'];
+                                $categoryID = $row['id'];
                                 $item_name = $row['name'];
                                 $description = $row['description'];
                                 $parent_id   = $row['parent_id'];
@@ -95,9 +95,9 @@ if (isset($_POST['btn_category_submit'])) {
                                     <td>'.$position .'</td>
                                     <td>'.date('d-M-Y', $timestamp).'</td>';
                                echo '
-                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#editAdModal" class="btn btn-success no-wrap edit-btn"><i class="fas fa-edit"></i> Edit</button></td>
+                                    <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-success no-wrap edit-category-btn"><i class="fas fa-edit"></i> Edit</button></td>
                                     
-                                    <td><button ad-item-id="'.$itemID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-btn"><i class="fas fa-trash"></i> Delete</button></td>
+                                    <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-category-btn"><i class="fas fa-trash"></i> Delete</button></td>
                                 </tr>';
                       }
                       echo '</table>';
@@ -119,7 +119,7 @@ if (isset($_POST['btn_category_submit'])) {
 
 
 
-        <!-- New Ad Item Modal -->
+        <!-- New Category Modal -->
         <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -150,6 +150,31 @@ if (isset($_POST['btn_category_submit'])) {
                         </div>
                   
                 </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" name="btn_category_submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+        <!-- Edit Category Modal -->
+        <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+              <form class="mb-0" action="" method="post">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="editCategoryModalLabel">Edit Category</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="edit_modal_body"></div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <button type="submit" name="btn_category_submit" class="btn btn-primary">Submit</button>
