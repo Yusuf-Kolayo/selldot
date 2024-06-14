@@ -1,5 +1,9 @@
 <?php require 'partials/hd.php'; 
 
+
+
+
+
 if (isset($_POST['btn_category_submit'])) {
      $name        = $_POST['name'];
      $description = $_POST['description'];
@@ -24,6 +28,93 @@ if (isset($_POST['btn_category_submit'])) {
      }
 }
 
+
+
+
+
+
+if (isset($_POST['btn_category_edit'])) {
+                   
+  $category_id   = $_POST['category_id'];
+
+  $name        = $_POST['name'];
+  $description = $_POST['description'];
+  $position    = $_POST['position'];
+  $parent_id   = $_POST['parent_id'];
+
+
+  if (
+    strlen($name)>0&&
+    strlen($description)>0&&
+    strlen($position)>0&&
+    strlen($parent_id)>0
+  ) {
+
+        $user_id = $_SESSION['user_id'];
+
+        // update the ad table
+        $sql = "UPDATE categories SET name=?, description=?, position=?, parent_id=? WHERE id=?";
+        $stmt = mysqli_prepare($connection, $sql);
+        mysqli_stmt_bind_param($stmt, 'sssss', $name,$description,$position,$parent_id,$category_id);
+        mysqli_stmt_execute($stmt);
+        $row = mysqli_stmt_affected_rows($stmt);
+
+        // check for number of rows inserted
+        $row = mysqli_affected_rows($connection);   
+        if ($row>0) {  
+          $alert_type = 'alert-success';
+          $msg = 'category update was successful';
+        } else if ($row==0) {
+          $alert_type = 'alert-danger';
+          $msg = 'something went wrong';
+        }
+
+  } else {
+     $alert_type = 'alert-danger';
+     $msg     = 'Please fill all the required fields';
+  }
+}
+
+
+
+ 
+ 
+
+ 
+if (isset($_POST['btn_delete_category'])) { // if the button submits to server
+
+      $category_id = $_POST['category_id']; 
+
+      // insert in the table
+      $sql = "DELETE FROM categories WHERE id=?";
+      $stmt = mysqli_prepare($connection, $sql);
+      mysqli_stmt_bind_param($stmt, 's', $category_id);
+      mysqli_stmt_execute($stmt);
+      $row = mysqli_stmt_affected_rows($stmt);
+
+      // check for number of rows inserted
+      $row = mysqli_affected_rows($connection);   
+      if ($row>0) {
+        $alert_type = 'alert-success';
+        $msg = 'Category deleted successfully';
+      } else if ($row==0) {
+        $alert_type = 'alert-danger';
+        $msg = 'something went wrong';
+      } 
+
+}
+
+
+// fetch all the main categories
+$rows=[];
+$query = "SELECT id,name FROM categories WHERE parent_id='0'";
+$result = mysqli_query($connection, $query);        
+if (mysqli_num_rows($result)>0) { 
+   while ($row = mysqli_fetch_assoc($result)) {
+      $rows[] = $row;
+   }
+}
+// var_dump($rows);
 ?>
 <?php require 'partials/header.php'; ?>
     
@@ -50,32 +141,30 @@ if (isset($_POST['btn_category_submit'])) {
 
 
 
-
-
-          <div class="view-box">
           <?php
-                  // if there is a message available
-                  if (strlen($msg)>0) {
-                      echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
-                  }
+                // if there is a message available
+                if (strlen($msg)>0) {
+                  echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
+                }
+          ?>
 
-
-
-
+          <div class="table-responsive">
+          <?php
                 
                   $sql = "SELECT * FROM categories";
                    $result = mysqli_query($connection, $sql);
                    $n_row  = (int) mysqli_num_rows($result);  
  
                    if ($n_row>0) {
-                      echo '<table class="table table-striped table-bordered" style="width:1100px">
+                      echo '<table class="table table-striped table-bordered">
                               <tr>
                                   <th>Name</th>
                                   <th>Description</th>
                                   <th>Parent</th>
                                   <th>Status</th>
-                                <th>position</th>
-                                <th>Date</th>
+                                  <th>position</th>
+                                  <th>Date</th>
+                                  <th></th>
                                   <th></th>
                                   <th></th>
                               </tr>';
@@ -83,21 +172,21 @@ if (isset($_POST['btn_category_submit'])) {
                                 $categoryID = $row['id'];
                                 $item_name = $row['name'];
                                 $description = $row['description'];
+                                $short_desciprtion = (strlen($row['description'])>60) ? substr($row['description'],0,60).' ..' : $description;
                                 $parent_id   = $row['parent_id'];
                                 $position    = $row['position'];
                                 $status = $row['status'];
                                 $timestamp = $row['timestamp'];
                           echo '<tr>
                                     <td>'. $item_name.'</td>
-                                    <td>'. $description.'</td>
+                                    <td>'. $short_desciprtion.'</td>
                                     <td>'. $parent_id.'</td>
                                     <td>'.$status.'</td>
                                     <td>'.$position .'</td>
-                                    <td>'.date('d-M-Y', $timestamp).'</td>';
-                               echo '
+                                    <td>'.date('d-M-Y', $timestamp).'</td>
+                                    <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#editCatIconModal" class="btn btn-success no-wrap edit-cat-icon-btn"><i class="fas fa-icons"></i> Edit Icon</button></td>
                                     <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-success no-wrap edit-category-btn"><i class="fas fa-edit"></i> Edit</button></td>
-                                    
-                                    <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#deleteAdModal" class="btn btn-danger no-wrap delete-category-btn"><i class="fas fa-trash"></i> Delete</button></td>
+                                    <td><button category-id="'.$categoryID.'" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal" class="btn btn-danger no-wrap delete-category-btn"><i class="fas fa-trash"></i> Delete</button></td>
                                 </tr>';
                       }
                       echo '</table>';
@@ -142,6 +231,11 @@ if (isset($_POST['btn_category_submit'])) {
                             <label for="" class="form-label">Parent</label>
                             <select name="parent_id" id="" class="form-select">
                                  <option value="0">NONE</option>
+                                 <?php
+                                    foreach ($rows as $key => $row) {
+                                       echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
+                                    }
+                                 ?>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -177,12 +271,44 @@ if (isset($_POST['btn_category_submit'])) {
                 <div class="modal-body" id="edit_modal_body"></div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" name="btn_category_submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" name="btn_category_edit" class="btn btn-primary">Submit</button>
                 </div>
                 </form>
               </div>
             </div>
           </div>
+
+
+
+
+
+
+
+
+        <!-- Delete Ad Pic Item Modal -->
+        <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            <form class="mb-0" action="" method="post">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="newAdModalLabel">Delete category <br>
+                  <small class="text-danger">Are you sure to proceed to delete this category ?</small>
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="delete_category_modal_body">
+                  <div class="text-center p-5">
+                      <img src="../assets/images/preloader1.gif" width="150" alt="">
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" name="btn_delete_category" class="btn btn-danger">Confirm Delete</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
 
 
 

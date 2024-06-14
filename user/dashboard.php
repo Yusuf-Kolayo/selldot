@@ -311,14 +311,15 @@
 
 
 
-          <div class="view-box">
           <?php
-                  // if there is a message available
-                  if (strlen($msg)>0) {
-                      echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
-                  }
+                // if there is a message available
+                if (strlen($msg)>0) {
+                  echo '<div class="alert '.$alert_type.' mb-2">'.$msg.'</div>';
+                }
+          ?>
 
-
+          <div class="table-responsive">
+          <?php
 
 
                   if ($logged_user_type=='admin') {
@@ -333,7 +334,7 @@
                    $n_row  = (int) mysqli_num_rows($result);  
  
                    if ($n_row>0) {
-                      echo '<table class="table table-striped" style="width:1100px">
+                      echo '<table class="table table-striped">
                               <tr>
                                   <th>Image</th>
                                   <th>Name</th>
@@ -535,7 +536,7 @@
             <div class="modal fade" id="deleteAdModal" tabindex="-1" aria-labelledby="newAdModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
-              <form class="mb-0" action="" method="post" enctype="multipart/form-data">
+              <form class="mb-0" action="" method="post">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="newAdModalLabel">Delete Ad <br>
                     <small class="text-danger">Are you sure to proceed to delete this Ad ?</small>

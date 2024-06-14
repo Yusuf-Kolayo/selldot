@@ -89,7 +89,11 @@ if (isset($_POST['btn_update_user_dp'])) { // if the button submits to server
 
 
 
-
+if ($logged_user_type=='admin') {
+   $user_type_label = '<span class="badge text-bg-light">Admin</span>';
+} else {
+   $user_type_label = '<span class="badge text-bg-light">User</span>';
+}
 
 ?>
  
@@ -102,7 +106,7 @@ if (isset($_POST['btn_update_user_dp'])) { // if the button submits to server
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">User Profile</h1>
+            <h1 class="h2"><?=$user_type_label?> Profile</h1>
 
             <div class="btn-toolbar mb-2 mb-md-0">
        

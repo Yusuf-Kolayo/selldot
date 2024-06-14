@@ -3,6 +3,7 @@ window.addEventListener('load', function (){
     var edit_ad_buttons = Array.from(document.getElementsByClassName('edit-ad-btn'))
     edit_ad_buttons.forEach(function(edit_button) {
         edit_button.addEventListener('click', function (e) {
+            $('#edit_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
             var button = e.target;
             var itemID = button.getAttribute('ad-item-id')
             console.log(itemID)
@@ -28,6 +29,7 @@ window.addEventListener('load', function (){
     var delete_ad_buttons = Array.from(document.getElementsByClassName('delete-ad-btn'))
     delete_ad_buttons.forEach(function(delete_button) {
         delete_button.addEventListener('click', function (e) {
+            $('#delete_ad_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
             var button = e.target;
             var itemID = button.getAttribute('ad-item-id')
             console.log(itemID)
@@ -52,6 +54,7 @@ window.addEventListener('load', function (){
     var edit_pic_buttons = Array.from(document.getElementsByClassName('edit-pic-btn'))
     edit_pic_buttons.forEach(function(edit_pic_button) {
         edit_pic_button.addEventListener('click', function (e) {
+            $('#edit_pic_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
             var button = e.target;
             var itemID = button.getAttribute('ad-item-id')
             console.log(itemID)
@@ -89,13 +92,11 @@ window.addEventListener('load', function (){
     var edit_category_buttons = Array.from(document.getElementsByClassName('edit-category-btn'))
     edit_category_buttons.forEach(function(edit_button) {
         edit_button.addEventListener('click', function (e) {
+            $('#edit_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
             var button = e.target;
             var categtoryID = button.getAttribute('category-id')
             console.log(categtoryID)
             var data2send = {'category_id':categtoryID}
-
-            $('#edit_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
-
             $.ajax({
                 url:"fetch_category_edit_form.php",
                 dataType:"text",
@@ -103,6 +104,33 @@ window.addEventListener('load', function (){
                 data:data2send,
                 success:function(response){
                      $('#edit_modal_body').html(response);
+                }
+            });
+        })
+    });
+
+
+
+
+
+
+
+
+    var delete_category_buttons = Array.from(document.getElementsByClassName('delete-category-btn'))
+    delete_category_buttons.forEach(function(delete_button) {
+        delete_button.addEventListener('click', function (e) {
+            $('#delete_category_modal_body').html('<div class="text-center p-5"><img src="../assets/images/preloader1.gif" width="150" alt=""></div>')
+            var button = e.target;
+            var categtoryID = button.getAttribute('category-id')
+            console.log(categtoryID)
+            var data2send = {'category_id':categtoryID}
+            $.ajax({
+                url:"fetch_category_delete_form.php",
+                dataType:"text",
+                method:"GET",
+                data:data2send,
+                success:function(response){
+                    $('#delete_category_modal_body').html(response);    //  $('#sp_year').html(year);   $('#aj_msg').html('');  
                 }
             });
         })

@@ -99,11 +99,13 @@
       .fa-icons {
         margin-bottom: 4px
       }
-      .view-box {
-        overflow:auto;
-      }
-      .no-wrap {
+
+      .no-wrap, td {
          white-space: nowrap;
+      }
+
+      .table-responsive table {
+        min-width: 1000px;
       }
     </style>
 
